@@ -1,39 +1,35 @@
-name: Hourly Autonomous LSTM Training
+name: Hourly AI Brain Training
 
 on:
   schedule:
-    # This standard cron syntax runs the server at minute 30 of every single hour, 24/7.
-    # This guarantees the model is freshly trained within 1 hour of ANY market's dynamic closing time.
-    - cron: '30 * * * *'
-  workflow_dispatch: # This allows you to click a button to run it manually anytime!
+    - cron: '30 * * * *'   # Every hour at :30
+  push:
+    branches: [ main ]     # ← ALSO runs on every commit (fixes your issue)
+  workflow_dispatch:       # Manual run button
 
 jobs:
   train-ai-brain:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Download Repository
+    - name: Checkout repo
       uses: actions/checkout@v3
 
-    - name: ⚙️ Boot up Python Engine
+    - name: Setup Python 3.10
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    - name: 📦 Install AI Libraries
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+    - name: Install dependencies
+      run: pip install -r requirements.txt
 
-    - name: 🧠 Run Live Market Training (Yahoo API)
-      run: |
-        python train_model.py
+    - name: Train AI Brain
+      run: python train_model.py
 
-    - name: 🚀 Push New Brain to App
+    - name: Commit updated brain
       run: |
-        git config --global user.name "AapkaSathi Cloud Bot"
-        git config --global user.email "bot@aapkasathi.com"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
         git add market_predictor.tflite
-        # If the file changed, commit and push it. If the market was closed and nothing changed, exit cleanly.
-        git commit -m "Auto-Update: Fresh LSTM Brain via Live Yahoo Data" || exit 0
+        git diff --staged --quiet || git commit -m "Auto: Updated AI brain [skip ci]"
         git push
