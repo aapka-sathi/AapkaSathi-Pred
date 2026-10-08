@@ -1,5 +1,5 @@
-tensorflow==2.20.0
-numpy
-yfinance
-scikit-learn
-pandas
+tensorflow==2.18.0
+numpy==1.26.4
+yfinance==0.2.43
+scikit-learn==1.5.2
+pandas==2.2.3
